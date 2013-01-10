@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: ZenPacks.core.Cmon
+Version: 1.2
+Summary: UNKNOWN
+Home-page: https://github.com/kmcminn/cmon
+Author: Karsten.McMinn
+Author-email: UNKNOWN
+License: BSD
+Description: advanced curl monitor
+Platform: Zenoss3

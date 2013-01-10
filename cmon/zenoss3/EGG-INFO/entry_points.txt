@@ -1,0 +1,2 @@
+[zenoss.zenpacks]
+ZenPacks.core.Cmon = ZenPacks.core.Cmon

@@ -1,0 +1,858 @@
+<tal:block metal:use-macro="here/templates/macros/page2">
+<tal:block metal:fill-slot="contentPane"
+    tal:define="editable python:here.isManager">
+
+<form method="POST" enctype="multipart/form-data"
+    tal:attributes="action string:${here/absolute_url_path}">
+    <input type="hidden" name="zenScreenName"
+        tal:attributes="value template/id" />
+
+
+        <tal:block tal:define="message request/message | string:State at time:;
+            tabletitle string:${here/getNowString};
+                        showfilterbox python:False">
+        <tal:block metal:use-macro="here/zenuimacros/macros/zentable">
+
+        <tal:block metal:fill-slot="zentablecontents">
+
+	<!--- header values -->
+
+    <tr>
+        <td class=tableheader align="left" >
+        </td>
+        <td align="left"  class="tableheader" colspan=3>
+            <input class="tableheader" type="submit" value=" Save "
+                name="zmanage_editProperties:method"/>
+        </td>
+    </tr>
+
+    <tr>
+      <td class="tableheader">Source Type</td>
+      <td class="tablevalues" tal:content="here/sourcetype"></td>
+    </tr>
+
+    <tr>
+        <td class="tableheader">Name</td>
+        <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="newId" size="40"
+                tal:attributes="value here/id" />
+        </td>
+        <td class="tablevalues" tal:condition="not:editable"
+            tal:content="here/id"/>
+    </tr>
+
+
+        <!-- BEGIN TABLE CONTENTS -->
+
+
+        <tr>
+            <td class="tableheader">Url</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="url:string" size="120"
+                tal:attributes="value here/url" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/url"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">Proxy</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="proxy:string" size="120"
+                tal:attributes="value here/proxy" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/proxy"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">Event Class</td>
+            <td class="tablevalues" tal:condition="editable">
+            <select class="tablevalues" name="eventClass">
+                <option tal:repeat="evtcls here/Events/getOrganizerNames"
+                        tal:content="evtcls"
+                        tal:attributes="selected python:evtcls==here.eventClass"/>
+            </select>
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/eventClass"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">Cycle Time (seconds)</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="cycletime:int" size="10"
+                tal:attributes="value here/cycletime" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/cycletime"/>
+        </tr>
+
+    <tr>
+        <td class="tableheader">Enabled</td>
+        <td class="tablevalues" tal:condition="editable">
+        <select class="tablevalues" name="enabled:boolean">
+            <option tal:repeat="e python:(True,False)" tal:content="e"
+                    tal:attributes="value e; selected python:e==here.enabled"/>
+        </select>
+        </td>
+        <td class="tablevalues" tal:condition="not:editable"
+            tal:content="here/enabled"/>
+    </tr>
+
+
+        <tr>
+            <td class="tableheader">Timeout (seconds)</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="timeout:int" size="10"
+                tal:attributes="value here/timeout" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/timeout"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">User Agent</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="agent:string" size="10"
+                tal:attributes="value here/agent" /> (ie7, opera, firefox15, firefox3 or mobile, default is ie6)
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/agent"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">Host Header</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="hostheader:string" size="40" tal:attributes="value here/hostheader" /> (example: dictionary.reference.com)
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/hostheader"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">1. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_1:string" size="40"
+                tal:attributes="value here/name_1" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_1"/>
+        </tr>
+        <tr>
+            <td class="tableheader">1. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_1:string" size="120"
+                tal:attributes="value here/regex_1" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_1"/>
+        </tr>
+        <tr>
+            <td class="tableheader">1. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_1:string" size="120"
+                tal:attributes="value here/xpath_1" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_1"/>
+        </tr>
+        <tr>
+            <td class="tableheader">2. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_2:string" size="40"
+                tal:attributes="value here/name_2" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_2"/>
+        </tr>
+        <tr>
+            <td class="tableheader">2. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_2:string" size="120"
+                tal:attributes="value here/regex_2" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_2"/>
+        </tr>
+        <tr>
+            <td class="tableheader">2. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_2:string" size="120"
+                tal:attributes="value here/xpath_2" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_2"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">3. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_3:string" size="40"
+                tal:attributes="value here/name_3" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_3"/>
+        </tr>
+        <tr>
+            <td class="tableheader">3. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_3:string" size="120"
+                tal:attributes="value here/regex_3" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_3"/>
+        </tr>
+        <tr>
+            <td class="tableheader">3. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_3:string" size="120"
+                tal:attributes="value here/xpath_3" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_3"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">4. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_4:string" size="40"
+                tal:attributes="value here/name_4" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_4"/>
+        </tr>
+        <tr>
+            <td class="tableheader">4. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_4:string" size="120"
+                tal:attributes="value here/regex_4" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_4"/>
+        </tr>
+        <tr>
+            <td class="tableheader">4. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_4:string" size="120"
+                tal:attributes="value here/xpath_4" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_4"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">5. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_5:string" size="40"
+                tal:attributes="value here/name_5" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_5"/>
+        </tr>
+        <tr>
+            <td class="tableheader">5. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_5:string" size="120"
+                tal:attributes="value here/regex_5" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_5"/>
+        </tr>
+        <tr>
+            <td class="tableheader">5. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_5:string" size="120"
+                tal:attributes="value here/xpath_5" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_5"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">6. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_6:string" size="40"
+                tal:attributes="value here/name_6" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_6"/>
+        </tr>
+        <tr>
+            <td class="tableheader">6. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_6:string" size="120"
+                tal:attributes="value here/regex_6" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_6"/>
+        </tr>
+        <tr>
+            <td class="tableheader">6. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_6:string" size="120"
+                tal:attributes="value here/xpath_6" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_6"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">7. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_7:string" size="40"
+                tal:attributes="value here/name_7" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_7"/>
+        </tr>
+        <tr>
+            <td class="tableheader">7. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_7:string" size="120"
+                tal:attributes="value here/regex_7" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_7"/>
+        </tr>
+        <tr>
+            <td class="tableheader">7. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_7:string" size="120"
+                tal:attributes="value here/xpath_7" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_7"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">8. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_8:string" size="40"
+                tal:attributes="value here/name_8" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_8"/>
+        </tr>
+        <tr>
+            <td class="tableheader">8. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_8:string" size="120"
+                tal:attributes="value here/regex_8" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_8"/>
+        </tr>
+        <tr>
+            <td class="tableheader">8. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_8:string" size="120"
+                tal:attributes="value here/xpath_8" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_8"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">9. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_9:string" size="40"
+                tal:attributes="value here/name_9" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_9"/>
+        </tr>
+        <tr>
+            <td class="tableheader">9. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_9:string" size="120"
+                tal:attributes="value here/regex_9" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_9"/>
+        </tr>
+        <tr>
+            <td class="tableheader">9. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_9:string" size="120"
+                tal:attributes="value here/xpath_9" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_9"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">10. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_10:string" size="40"
+                tal:attributes="value here/name_10" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_10"/>
+        </tr>
+        <tr>
+            <td class="tableheader">10. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_10:string" size="120"
+                tal:attributes="value here/regex_10" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_10"/>
+        </tr>
+        <tr>
+            <td class="tableheader">10. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_10:string" size="120"
+                tal:attributes="value here/xpath_10" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_10"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">11. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_11:string" size="40"
+                tal:attributes="value here/name_11" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_11"/>
+        </tr>
+        <tr>
+            <td class="tableheader">11. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_11:string" size="120"
+                tal:attributes="value here/regex_11" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_11"/>
+        </tr>
+        <tr>
+            <td class="tableheader">11. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_11:string" size="120"
+                tal:attributes="value here/xpath_11" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_11"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">12. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_12:string" size="40"
+                tal:attributes="value here/name_12" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_12"/>
+        </tr>
+        <tr>
+            <td class="tableheader">12. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_12:string" size="120"
+                tal:attributes="value here/regex_12" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_12"/>
+        </tr>
+        <tr>
+            <td class="tableheader">12. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_12:string" size="120"
+                tal:attributes="value here/xpath_12" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_12"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">13. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_13:string" size="40"
+                tal:attributes="value here/name_13" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_13"/>
+        </tr>
+        <tr>
+            <td class="tableheader">13. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_13:string" size="120"
+                tal:attributes="value here/regex_13" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_13"/>
+        </tr>
+        <tr>
+            <td class="tableheader">13. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_13:string" size="120"
+                tal:attributes="value here/xpath_13" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_13"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">14. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_14:string" size="40"
+                tal:attributes="value here/name_14" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_14"/>
+        </tr>
+        <tr>
+            <td class="tableheader">14. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_14:string" size="120"
+                tal:attributes="value here/regex_14" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_14"/>
+        </tr>
+        <tr>
+            <td class="tableheader">14. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_14:string" size="120"
+                tal:attributes="value here/xpath_14" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_14"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">15. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_15:string" size="40"
+                tal:attributes="value here/name_15" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_15"/>
+        </tr>
+        <tr>
+            <td class="tableheader">15. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_15:string" size="120"
+                tal:attributes="value here/regex_15" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_15"/>
+        </tr>
+        <tr>
+            <td class="tableheader">15. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_15:string" size="120"
+                tal:attributes="value here/xpath_15" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_15"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">16. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_16:string" size="40"
+                tal:attributes="value here/name_16" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_16"/>
+        </tr>
+        <tr>
+            <td class="tableheader">16. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_16:string" size="120"
+                tal:attributes="value here/regex_16" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_16"/>
+        </tr>
+        <tr>
+            <td class="tableheader">16. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_16:string" size="120"
+                tal:attributes="value here/xpath_16" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_16"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">17. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_17:string" size="40"
+                tal:attributes="value here/name_17" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_17"/>
+        </tr>
+        <tr>
+            <td class="tableheader">17. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_17:string" size="120"
+                tal:attributes="value here/regex_17" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_17"/>
+        </tr>
+        <tr>
+            <td class="tableheader">17. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_17:string" size="120"
+                tal:attributes="value here/xpath_17" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_17"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">18. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_18:string" size="40"
+                tal:attributes="value here/name_18" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_18"/>
+        </tr>
+        <tr>
+            <td class="tableheader">18. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_18:string" size="120"
+                tal:attributes="value here/regex_18" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_18"/>
+        </tr>
+        <tr>
+            <td class="tableheader">18. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_18:string" size="120"
+                tal:attributes="value here/xpath_18" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_18"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">19. Name</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_19:string" size="40"
+                tal:attributes="value here/name_19" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_19"/>
+        </tr>
+        <tr>
+            <td class="tableheader">19. Regex</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_19:string" size="120"
+                tal:attributes="value here/regex_19" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_19"/>
+        </tr>
+        <tr>
+            <td class="tableheader">19. XPath</td>
+            <td class="tablevalues odd" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_19:string" size="120"
+                tal:attributes="value here/xpath_19" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_19"/>
+        </tr>
+
+
+        <tr>
+            <td class="tableheader">20. Name</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="name_20:string" size="40"
+                tal:attributes="value here/name_20" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/name_20"/>
+        </tr>
+        <tr>
+            <td class="tableheader">20. Regex</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="regex_20:string" size="120"
+                tal:attributes="value here/regex_20" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/regex_20"/>
+        </tr>
+        <tr>
+            <td class="tableheader">20. XPath</td>
+            <td class="tablevalues even" tal:condition="editable">
+            <input class="tablevalues" type="text" name="xpath_20:string" size="120"
+                tal:attributes="value here/xpath_20" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/xpath_20"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">Log</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="log:string" size="120"
+                tal:attributes="value here/log" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/log"/>
+        </tr>
+
+
+	<!--- put the inherited RRDDataSource values at the end -->
+
+       <tr>
+            <td class="tableheader">Component</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="component" size="40"
+                tal:attributes="value here/component" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/component"/>
+        </tr>
+
+        <tr>
+            <td class="tableheader">Event Key</td>
+            <td class="tablevalues" tal:condition="editable">
+            <input class="tablevalues" type="text" name="eventKey" size="40"
+                tal:attributes="value here/eventKey" />
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/eventKey"/>
+        </tr>
+
+        <tr tal:condition="python:here.sourcetype=='COMMAND'">
+            <td class="tableheader">Severity</td>
+            <td class="tablevalues" tal:condition="editable">
+            <select class="tablevalues" name="severity:int">
+               <option tal:repeat="sev here/ZenEventManager/getSeverities"
+                       tal:content="python:sev[0]"
+                       tal:attributes="selected python:sev[1]==here.severity; value python:sev[1]"/>
+            </select>
+            </td>
+          <td class="tablevalues" tal:condition="not:editable"
+                tal:content="here/getSeverityString"/>
+        </tr>
+
+    <tr>
+        <td class=tableheader align="left" >
+        </td>
+        <td align="left"  class="tableheader" colspan=3>
+            <input class="tableheader" type="submit" value=" Save "
+                name="zmanage_editProperties:method"/>
+        </td>
+    </tr>
+
+        <!-- END TABLE CONTENTS -->
+
+        </tal:block>
+        </tal:block>
+        </tal:block>
+
+
+</form>
+
+
+<!----------------------------------------------------------------->
+
+
+
+<form method="post" tal:attributes="action here/absolute_url_path">
+
+
+        <tal:block tal:define="tableName string:rrdtempdplist;
+        objects here/datapoints;
+        batch python:here.ZenTableManager.getBatch(tableName,objects);
+                tabletitle string:DataPoints;
+                zzzz_menu_id string:DataPoint_list;">
+        <tal:block metal:use-macro="here/zenuimacros/macros/zentable">
+
+
+            <tal:block metal:fill-slot="filterslot">
+            </tal:block>
+
+            <tal:block metal:fill-slot="menuslot">
+
+    <tal:block tal:condition="menu_id | python:False">
+        <tal:block metal:use-macro="here/zenuimacros/macros/devmovemenu"/>
+    </tal:block>
+            
+	    </tal:block>
+
+
+        <tal:block metal:fill-slot="zentablecontents">
+        <!-- BEGIN TABLE CONTENTS -->
+	<!-- is more needed here? -->
+
+
+
+
+
+    <tr>
+        <th tal:replace="structure python:here.ZenTableManager.getTableHeader(
+                    tableName,'getId','Name')"/>
+        <th tal:replace="structure python:here.ZenTableManager.getTableHeader(
+                    tableName,'rrdtype','Type')"/>
+    </tr>
+    <tr class="tablevalues" tal:repeat="dp batch">
+        <td>
+          <input tal:condition="editable"
+          	type="checkbox" name="ids:list"
+		tal:attributes="value dp/id"/>
+	  <a tal:condition="editable"
+		tal:attributes="href dp/getPrimaryUrlPath"
+		tal:content="dp/id">name</a>           
+
+          <tal:block tal:condition="not:editable" tal:content="dp/getId"/>
+
+        </td>
+        <td tal:content="dp/rrdtype"/>
+    </tr>
+    <tr>
+        <td colspan="4" class="tableheader">
+            <span metal:use-macro="here/zenTableNavigation/macros/navbody"/>
+        </td>
+    </tr>
+    <input type='hidden' name='tableName' tal:attributes="value tableName" />
+
+	<!-- Adding some headers for editing data points -->
+
+    <tr class="tableheader" tal:condition="editable">
+        <td colspan="2">
+        <input class="tableheader" type="text" name="id"/>
+        <input class="tableheader" type="submit"
+          onkeypress="return submitViaEnter(event,'manage_addRRDDataPoint');"
+          name="manage_addRRDDataPoint:method" value=" Add " />
+        |
+        <input class="tableheader" type="submit"
+            name="manage_deleteRRDDataPoints:method" value=" Delete " />
+        </td>
+    </tr>
+
+
+        <!-- END TABLE CONTENTS -->
+
+        </tal:block>
+        </tal:block>
+        </tal:block>
+
+
+
+</form>
+
+<!----------------------------------------------------------------->
+</tal:block>
+</tal:block>
