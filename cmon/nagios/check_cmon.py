@@ -204,6 +204,12 @@ def parse(url, contentMatches=[], agent=None,
 
 
 if __name__ == "__main__":
+
+    if len(sys.argv) is 1:
+        print sys.argv[0], '<options>'
+        print sys.argv[0], '-h for help'
+        sys.exit(1)
+
     from optparse import OptionParser
 
     parser = OptionParser()
@@ -214,6 +220,7 @@ if __name__ == "__main__":
     parser.add_option("--hostheader", dest="hostheader")
     parser.add_option("--timeout", dest="timeout", default=10)
     parser.add_option("--log", dest="log")
+
     for i in range(0, MAX_CHECKS):
         for prefix in PREFIXES:
             name = "%s-%d" % (prefix, i)
@@ -227,10 +234,10 @@ if __name__ == "__main__":
     results = parse(options.url, contentMatches, options.agent,
                     options.proxy, options.hostheader, options.timeout)
 
-    print "Success|",
+    sys.stdout.write("Success | ")
+
     for name, value in results:
-        #print "%s=%s;;;0" % (name, value),
-        print "%s=%s" % (name, value),
+        sys.stdout.write("%s=%s" % (name, value))
     print
 
     log = options.log
