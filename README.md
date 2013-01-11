@@ -2,7 +2,22 @@ cMon
 ========
 
 #### curl monitor - Nagios/Zenoss plugin for measuing http ####
-Work in progress, based on a python nagios plugin utilizing lxml, libcurl and regex to do effective and simple httpd measurement and monitoring.
+(WIP) Python zenoss/nagios plugin utilizing [python.re](http://docs.python.org/2/library/re.html)[lxml.etree](http://lxml.de/1.3/tutorial.html) and [libcurl](http://curl.haxx.se/libcurl/libcurl) to do effective and simple httpd measurement and monitoring.
+
+Was written to be more versatile than check_http. Ala:
+
+1. Xpath
+2. Xpath extract value
+3. Regex anything
+4. Regex group extract values
+5. Multiple request measurements
+6. Single error performance variable
+7. Easy support for hostnames, http, https and ports
+8. Basic Auth
+9. Headers (cookies, host, anything)
+10. User Agents
+11. Proxy support
+
 
 ### Install ###
 ```
@@ -95,3 +110,10 @@ cmon/zenoss3 is non-developer mode zenpack that was last tested in zenoss3. Alte
 
 ### zenoss4 ###
 use as a command datasource and call it directly on the command line. add datapoints manually.
+
+# Notes #
+The nagios plugin's regex and xpath logic has been well vetted in large production environments. If you see any improvements, please let me know. The code is a bit rough around the edges but largely effective for the audiences that will use and maintain it. The zenoss3 zenpack has a twisted daemon that bolts into a zenoss collector which will save you cycles on spawning a python shell with every invocation and is fairly fast. 
+
+The plugin was initially written for zenoss2. In zenoss, thresholds are handled externally to a plugin. Returnning integers and floats regardless of what goes wrong is crucial to keeping things like graphs happy and thresholds working correctly. 
+
+
