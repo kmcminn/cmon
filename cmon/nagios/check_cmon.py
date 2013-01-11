@@ -73,11 +73,17 @@ def nagiosStdoutExit(results):
     """
     spit out stdout
     """
-    sys.stdout.write("Success | ")
+    perf_stdout = []
+    result_stdout = ['SUCCESS']
+
 
     for name, value in results:
 
-        sys.stdout.write("%s=%s;; " % (name, value))
+        if 'result_message' not in name:
+            perf_stdout.append("%s=%s;; " % (name, value))
+        else:
+            result_stdout.append(value)
+            result_stdout.append('|')
 
         if 'curl_error' in name:
 
@@ -86,7 +92,7 @@ def nagiosStdoutExit(results):
             except:
                 exitcode = 250
 
-    sys.stdout.write("\n")
+    sys.stdout.write(' '.join(result_stdout) + ' ' + ' '.join(perf_stdout) + "\n")
     sys.exit(exitcode)
 
 
@@ -219,7 +225,7 @@ def parse(url, contentMatches=[], agent=None,
             cerror = 250
 
         return (('curl_error', cerror), ('time_total', 0),
-                ('time_dns', 0), ('time_connect', 0), ('size_download', 0))
+                ('time_dns', 0), ('time_connect', 0), ('size_download', 0), ('result_message', pce[1]))
 
     body = b.getvalue()
     root = None
@@ -308,6 +314,8 @@ def parse(url, contentMatches=[], agent=None,
 
         # append to the results list
         results.append(('%s_match_failed' % name, failed))
+
+    results.append(('result_message', 'cMon OK'))
 
     return results
 
