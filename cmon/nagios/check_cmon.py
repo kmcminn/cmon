@@ -61,13 +61,13 @@ def parseContentMatches(cfg, start=0, length=MAX_CHECKS):
                             "The two are mutually exclusive." % i)
 
         if xpath:
-            type = "xpath"
+            typex = "xpath"
             value = xpath
         else:
-            type = "regex"
+            typex = "regex"
             value = regex
 
-        contentMatches.append((name, type, value))
+        contentMatches.append((name, typex, value))
 
     return contentMatches
 
@@ -154,12 +154,12 @@ def parse(url, contentMatches=[], agent=None,
     results.append(('size_download', curl.getinfo(curl.SIZE_DOWNLOAD)))
     results.append(('http_code', curl.getinfo(curl.RESPONSE_CODE)))
 
-    for (name, type, value) in contentMatches:
+    for (name, typex, value) in contentMatches:
 
         matches = []
         failed = 1
 
-        if type == "xpath":
+        if typex == "xpath":
 
             # first check if this is the first iteration
             if root is None:
@@ -195,7 +195,7 @@ def parse(url, contentMatches=[], agent=None,
             except:
                 pass
 
-        elif type == "regex":
+        elif typex == "regex":
             try:
                 # compile and re.search
                 result = re.compile(value, re.DOTALL).search(body)
