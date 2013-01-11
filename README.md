@@ -1,4 +1,4 @@
-cmon
+cMon
 ========
 
 #### curl monitor - Nagios/Zenoss plugin for measuing http ####
