@@ -14,7 +14,7 @@ $ git clone https://github.com/kmcminn/cmon.git
 The plugin can be used as command line tool or a python module for getting measurements.
 
 ### commandline ###
-```python
+```
 $ cmon/nagios/check_cmon.py -h
 usage: check_cmon.py [-h] [-u URL] [-p PROXY] [-a AGENT] [-v VERBOSE]
                      [--header HEADER [HEADER ...]] [-t TIMEOUT] [-l LOG]
