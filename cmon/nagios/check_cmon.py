@@ -19,10 +19,12 @@ AGENTS = {
            'Mercury SiteScope)',
     'ie7': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1;' +
            ' GTB5; .NET CLR 2.0.50727)',
-    'ie8': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)'
-    'ie9': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)'
-    'ie10': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
+    'ie8': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
+    'ie9': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
+    'ie10': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
     'opera': 'Opera/9.62 (Windows NT 5.1; U; pt-BR) Presto/2.1.1',
+    'safari': 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 ' +
+              '(KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25',
     'firefox15': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;' +
                  ' rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12',
     'firefox3': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;' +
@@ -30,7 +32,7 @@ AGENTS = {
     'chrome23': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) ' +
                 'AppleWebKit/537.11 (KHTML, like Gecko) ' +
                 'Chrome/23.0.1271.6 Safari/537.11',
-    'mobile': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X)' +
+    'ios5': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X)' +
               ' AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1' +
               ' Mobile/9A334 Safari/7534.48.3'
 }
@@ -201,8 +203,15 @@ def parse(url, contentMatches=[], agent=None,
 
     try:
         curl.perform()
-    except pycurl.error, pce:
-        return (('curl_error', pce[0]), ('time_total', 0),
+
+    except Exception, pce:
+
+        if len(pce) > 1:
+            cerror = pce[0]
+        else:
+            cerror = 250
+
+        return (('curl_error', cerror), ('time_total', 0),
                 ('time_dns', 0), ('time_connect', 0), ('size_download', 0))
 
     body = b.getvalue()
@@ -308,22 +317,27 @@ if __name__ == "__main__":
 
     parser.add_argument("-u", "--url", dest="url",
                         help="Hostname[:port] to connect to and check. Supports " +
-                             "ssl. Supports strings with http[s]:// or without. " +
-                             "https will error if server certificate is invalid")
+                             "ssl. Supports strings with and without http[s]://. " +
+                             "Https will error if server certificate is invalid. " +
+                             "Supports basic http auth i.e. http://user:pass@foo.com:8080/bar")
     parser.add_argument("-p", "--proxy", dest="proxy",
-                        help="Proxy to connect through")
+                        help="Proxy to connect through, default proxy port is 1080. " +
+                             "Supports protocols specifications (socks5://, etc and " +
+                             "and user, password and port embedding in the url")
     parser.add_argument("-a", "--agent", dest="agent",
-                        help="Browser agent to use for query, " +
-                        "default firefox 15 strings, agent codes [ ie6, ie7, firefox15, " +
-                        " mobile, firefox3, opera")
+                        help="Browser agent to use for query. " +
+                        "Default = chrome23. Codes for other User Agents: [ ie6, ie7, " +
+                        " ie8, ie9, ie10, chrome23, firefox15, " +
+                        " ios5, firefox3, safari, opera ]")
     parser.add_argument("-v", "--verbose", dest="verbose",
-                        help="enables debugging output, currently does nothing")
+                        help="Enable debugging output, currently does nothing")
     parser.add_argument("--header", nargs="+", dest="header",
-                        help="set a <string> header. suitable for setting")
+                        help="Add one or more HTTP header(s) to the request. Headers can be " +
+                             " removed by passing a header with a value of '.'")
     parser.add_argument("-t", "--timeout", dest="timeout", default=10,
-                        help="timeout for the tcp connection")
+                        help="Set a timeout for request")
     parser.add_argument("-l", "--log", dest="log",
-                        help="write to <filename>")
+                        help="Optionally write parse commands to a file")
 
     expandXpathRegexOptions(parser, PREFIXES, MAX_CHECKS)
 
