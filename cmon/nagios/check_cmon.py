@@ -206,9 +206,10 @@ def parse(url, contentMatches=[], agent=None,
 
     except Exception, pce:
 
-        if len(pce) > 1:
-            cerror = pce[0]
-        else:
+
+        try:
+            cerror = int(pce[0])
+        except:
             cerror = 250
 
         return (('curl_error', cerror), ('time_total', 0),
