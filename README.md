@@ -1,8 +1,8 @@
 cMon
 ========
 
-#### curl monitor - Nagios/Zenoss plugin for measuing http ####
-(WIP) Python zenoss/nagios plugin utilizing [python.re](http://docs.python.org/2/library/re.html)[lxml.etree](http://lxml.de/1.3/tutorial.html) and [libcurl](http://curl.haxx.se/libcurl/libcurl) to do effective and simple httpd measurement and monitoring.
+#### curl monitor - Nagios/Zenoss plugin for measuing http in all its forms ####
+(WIP) Python zenoss/nagios plugin utilizing [python.re](http://docs.python.org/2/library/re.html), [lxml.etree](http://lxml.de/1.3/tutorial.html) and [libcurl](http://curl.haxx.se/libcurl/libcurl) to do effective and simple httpd measurement and monitoring.
 
 Was written to be more versatile than check_http. Ala:
 
@@ -103,13 +103,13 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 
 ### nagios ###
-The plugin lacks warning and critical threshold abilities. Add it to your plugins directory and get hacking!
+The plugin lacks warning and critical threshold abilities. Don't have a need for them at the moment.
 
 ### zenoss3 ###
-cmon/zenoss3 is non-developer mode zenpack that was last tested in zenoss3. Alternately you can use the nagios plugin as a command in zenoss3.
+cmon/cmon/zenoss3 is a non-developer mode zenpack that was last tested in zenoss3. See notes for zenoss4 for using as a command datasource.
 
 ### zenoss4 ###
-use as a command datasource and call it directly on the command line. add datapoints manually.
+use just the plugin as a command datasource in your monitoring templates. Performance variables are GAUGE types and in zenoss the datapoint name needs to match the performance variable name in the output of the script. You'd typically install this in $ZENHOME/bin
 
 # Notes #
 The nagios plugin's regex and xpath logic has been well vetted in large production environments. If you see any improvements, please let me know. The code is a bit rough around the edges but largely effective for the audiences that will use and maintain it. The zenoss3 zenpack has a twisted daemon that bolts into a zenoss collector which will save you cycles on spawning a python shell with every invocation and is fairly fast. 
