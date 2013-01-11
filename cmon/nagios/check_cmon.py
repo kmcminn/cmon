@@ -12,24 +12,24 @@ from lxml import etree
 MAX_CHECKS = 20
 PREFIXES = ("name", "regex", "xpath")
 AGENTS = {
-    None: 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT'
-    + '5.0; Mercury SiteScope)',
-    'ie6': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0;'
-    + 'Mercury SiteScope)',
-    'ie7': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1;'
-    + ' GTB5; .NET CLR 2.0.50727)',
+    None: 'Mozilla/5.0 (Windows NT 5.1; rv:15.0)' +
+          ' Gecko/20100101 Firefox/15.0',
+    'ie6': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0;' +
+           'Mercury SiteScope)',
+    'ie7': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1;' +
+           ' GTB5; .NET CLR 2.0.50727)',
     'opera': 'Opera/9.62 (Windows NT 5.1; U; pt-BR) Presto/2.1.1',
-    'firefox15': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;'
-    + ' rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12',
-    'firefox3': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;'
-    + ' rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6',
-    'mobile': 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420'
-    + '(KHTML, like Gecko) Version/3.0 Mobile/1C28 Safari/419.3',
+    'firefox15': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;' +
+                 ' rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12',
+    'firefox3': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;' +
+                ' rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6',
+    'mobile': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X)' +
+              ' AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3'
 }
 
 
 def nagiosStdout(results):
-    """ 
+    """
     spit out stdout
     """
 
@@ -82,15 +82,15 @@ def parseWithConfig(cfg, start=0, length=MAX_CHECKS):
     contentMatches = parseContentMatches(cfg, start, length)
     agent = cfg.agent
     proxy = cfg.proxy
-    hostheader = cfg.hostheader
+    header = cfg.header
     log = cfg.log
     timeout = cfg.timeout
 
-    results = parse(url, contentMatches, agent, proxy, hostheader, timeout)
+    results = parse(url, contentMatches, agent, proxy, header, timeout)
     return results
 
 
-def num_str(num, precision=4):
+def formatNumber(num, precision=4):
     """
     returns a number supressing formatting exceptions
     """
@@ -105,7 +105,7 @@ def num_str(num, precision=4):
     return ('%f' % (num))
 
 
-def curlConfig(write, url, timeout, agent, proxy, hostheader):
+def curlConfig(write, url, timeout, agent, proxy, header):
 
     c = pycurl.Curl()
     c.setopt(pycurl.WRITEFUNCTION, write)
@@ -121,21 +121,20 @@ def curlConfig(write, url, timeout, agent, proxy, hostheader):
     if proxy:
         c.setopt(pycurl.PROXY, proxy)
 
-    if hostheader:
-        c.setopt(pycurl.HTTPHEADER, ["Host:" + hostheader])
+    if header:
+        c.setopt(pycurl.HTTPHEADER, header)
 
     return c
-       
 
 
 def parse(url, contentMatches=[], agent=None,
-          proxy=None, hostheader=None, timeout=10):
+          proxy=None, header=None, timeout=10):
 
     timeout = int(timeout)
     agent = AGENTS.get(agent, AGENTS.get(None))
     b = StringIO.StringIO()
 
-    curl = curlConfig(b.write, url, timeout, agent, proxy, hostheader)
+    curl = curlConfig(b.write, url, timeout, agent, proxy, header)
 
     try:
         curl.perform()
@@ -148,9 +147,9 @@ def parse(url, contentMatches=[], agent=None,
 
     results = []
     results.append(('curl_error', 0))
-    results.append(('time_total', num_str(curl.getinfo(curl.TOTAL_TIME))))
-    results.append(('time_dns', num_str(curl.getinfo(curl.NAMELOOKUP_TIME))))
-    results.append(('time_connect', num_str(curl.getinfo(curl.CONNECT_TIME))))
+    results.append(('time_total', formatNumber(curl.getinfo(curl.TOTAL_TIME))))
+    results.append(('time_dns', formatNumber(curl.getinfo(curl.NAMELOOKUP_TIME))))
+    results.append(('time_connect', formatNumber(curl.getinfo(curl.CONNECT_TIME))))
     results.append(('size_download', curl.getinfo(curl.SIZE_DOWNLOAD)))
     results.append(('http_code', curl.getinfo(curl.RESPONSE_CODE)))
 
@@ -196,6 +195,7 @@ def parse(url, contentMatches=[], agent=None,
                 pass
 
         elif typex == "regex":
+
             try:
                 # compile and re.search
                 result = re.compile(value, re.DOTALL).search(body)
@@ -211,7 +211,8 @@ def parse(url, contentMatches=[], agent=None,
 
                         matches.extend(result.groups())
 
-                        # throw out whitespace and alpha so we can threshold this reliably
+                        # throw out whitespace and alpha so we
+                        # can threshold this reliably
                         matches[0] = re.sub("[\s,a-z,A-Z]", "", matches[0])
 
             except:
@@ -239,36 +240,50 @@ if __name__ == "__main__":
         print sys.argv[0], '-h for help'
         sys.exit(1)
 
-    from optparse import OptionParser
 
-    parser = OptionParser()
-    parser.add_option("--url", dest="url")
-    parser.add_option("--proxy", dest="proxy")
-    parser.add_option("--agent", dest="agent")
-    parser.add_option("--verbose", dest="verbose")
-    parser.add_option("--hostheader", dest="hostheader")
-    parser.add_option("--timeout", dest="timeout", default=10)
-    parser.add_option("--log", dest="log")
+    import argparse
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-u", "--url", dest="url",
+                        help="hostname[:port] to connect to and check")
+    parser.add_argument("-p", "--proxy", dest="proxy",
+                        help="proxy to connect through")
+    parser.add_argument("-a", "--agent", dest="agent",
+                        help="browser agent to use for query, " +
+                        "default firefox 15 strings, agent codes [ie6, ie7, firefox15, " +
+                        " mobile, firefox3, opera")
+    parser.add_argument("-v", "--verbose", dest="verbose",
+                        help="enables debugging output, currently does nothing")
+    parser.add_argument("--header", nargs="+", dest="header",
+                        help="set a <string> header. suitable for setting" )
+    parser.add_argument("-t", "--timeout", dest="timeout", default=10,
+                        help="timeout for the tcp connection")
+    parser.add_argument("-l", "--log", dest="log",
+                        help="write to <filename>")
+
 
     for i in range(0, MAX_CHECKS):
         for prefix in PREFIXES:
             name = "%s-%d" % (prefix, i)
             dest = "%s_%d" % (prefix, i)
-            parser.add_option("--%s" % name, dest=dest)
+            parser.add_argument("--%s" % name, dest=dest)
 
-    (options, args) = parser.parse_args()
+    options = parser.parse_args()
 
     contentMatches = parseContentMatches(options)
 
     results = parse(options.url, contentMatches, options.agent,
-                    options.proxy, options.hostheader, options.timeout)
+                    options.proxy, options.header, options.timeout)
 
     nagiosStdout(results)
 
-    log = options.log
-    if log:
+    if options.log:
+
+        import time
+
         try:
-            f = open(log, 'a')
+            f = open(options.log, 'a')
             logFmt = "%s | %s \n"
             msg = logFmt % (time.time(), ' '.join(sys.argv))
             f.write(msg)
