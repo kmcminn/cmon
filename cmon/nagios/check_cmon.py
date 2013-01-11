@@ -12,8 +12,9 @@ from lxml import etree
 MAX_CHECKS = 5
 PREFIXES = ("name", "regex", "xpath")
 AGENTS = {
-    None: 'Mozilla/5.0 (Windows NT 5.1; rv:15.0)' +
-          ' Gecko/20100101 Firefox/15.0',
+    None: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) ' +
+          'AppleWebKit/537.11 (KHTML, like Gecko) ' +
+          'Chrome/23.0.1271.6 Safari/537.11',
     'ie6': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0;' +
            'Mercury SiteScope)',
     'ie7': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1;' +
@@ -23,6 +24,9 @@ AGENTS = {
                  ' rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12',
     'firefox3': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;' +
                 ' rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6',
+    'chrome23': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) ' +
+                'AppleWebKit/537.11 (KHTML, like Gecko) ' +
+                'Chrome/23.0.1271.6 Safari/537.11',
     'mobile': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X)' +
               ' AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1' +
               ' Mobile/9A334 Safari/7534.48.3'
