@@ -28,6 +28,16 @@ AGENTS = {
 }
 
 
+def nagiosStdout(results):
+
+    sys.stdout.write("Success | ")
+
+    for name, value in results:
+        sys.stdout.write("%s=%s;; " % (name, value))
+
+    sys.stdout.write("\n")
+
+
 def parseContentMatches(cfg, start=0, length=MAX_CHECKS):
     """
     parses name/regex/xpath_N properties
@@ -77,21 +87,19 @@ def parseWithConfig(cfg, start=0, length=MAX_CHECKS):
     return results
 
 
-def num_str(num, precision = 4):
+def num_str(num, precision=4):
     """
     returns a number supressing formatting exceptions
     """
-    
+
     try:
 
         num = float(num)
 
     except:
-        return 0;
-
+        return 0
 
     return ('%f' % (num))
-
 
 
 def parse(url, contentMatches=[], agent=None,
@@ -256,12 +264,7 @@ if __name__ == "__main__":
     results = parse(options.url, contentMatches, options.agent,
                     options.proxy, options.hostheader, options.timeout)
 
-    sys.stdout.write("Success | ")
-
-    for name, value in results:
-        sys.stdout.write("%s=%s;; " % (name, value))
-
-    print
+    nagiosStdout(results)
 
     log = options.log
     if log:
