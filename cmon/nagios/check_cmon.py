@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# CmonUrlCheck.py - advanced curl based nagios plugin
+# check_cmon.py - advanced curl based nagios plugin
 
 import sys
 import re
@@ -29,6 +29,9 @@ AGENTS = {
 
 
 def nagiosStdout(results):
+    """ 
+    spit out stdout
+    """
 
     sys.stdout.write("Success | ")
 
@@ -102,15 +105,10 @@ def num_str(num, precision=4):
     return ('%f' % (num))
 
 
-def parse(url, contentMatches=[], agent=None,
-          proxy=None, hostheader=None, timeout=10):
+def curlConfig(write, url, timeout, agent, proxy, hostheader):
 
-    timeout = int(timeout)
-    agent = AGENTS.get(agent, AGENTS.get(None))
-
-    b = StringIO.StringIO()
     c = pycurl.Curl()
-    c.setopt(pycurl.WRITEFUNCTION, b.write)
+    c.setopt(pycurl.WRITEFUNCTION, write)
     c.setopt(pycurl.URL, url)
     c.setopt(pycurl.TIMEOUT, timeout)
     c.setopt(pycurl.USERAGENT, agent)
@@ -122,11 +120,25 @@ def parse(url, contentMatches=[], agent=None,
 
     if proxy:
         c.setopt(pycurl.PROXY, proxy)
+
     if hostheader:
         c.setopt(pycurl.HTTPHEADER, ["Host:" + hostheader])
 
+    return c
+       
+
+
+def parse(url, contentMatches=[], agent=None,
+          proxy=None, hostheader=None, timeout=10):
+
+    timeout = int(timeout)
+    agent = AGENTS.get(agent, AGENTS.get(None))
+    b = StringIO.StringIO()
+
+    curl = curlConfig(b.write, url, timeout, agent, proxy, hostheader)
+
     try:
-        c.perform()
+        curl.perform()
     except pycurl.error, pce:
         return (('curl_error', pce[0]), ('time_total', 0),
                 ('time_dns', 0), ('time_connect', 0), ('size_download', 0))
@@ -136,16 +148,14 @@ def parse(url, contentMatches=[], agent=None,
 
     results = []
     results.append(('curl_error', 0))
-    results.append(('time_total', num_str(c.getinfo(c.TOTAL_TIME))))
-    results.append(('time_dns', num_str(c.getinfo(c.NAMELOOKUP_TIME))))
-    results.append(('time_connect', num_str(c.getinfo(c.CONNECT_TIME))))
-    results.append(('size_download', c.getinfo(c.SIZE_DOWNLOAD)))
-    results.append(('http_code', c.getinfo(c.RESPONSE_CODE)))
+    results.append(('time_total', num_str(curl.getinfo(curl.TOTAL_TIME))))
+    results.append(('time_dns', num_str(curl.getinfo(curl.NAMELOOKUP_TIME))))
+    results.append(('time_connect', num_str(curl.getinfo(curl.CONNECT_TIME))))
+    results.append(('size_download', curl.getinfo(curl.SIZE_DOWNLOAD)))
+    results.append(('http_code', curl.getinfo(curl.RESPONSE_CODE)))
 
-    # main content match block
     for (name, type, value) in contentMatches:
 
-        # empty the matches list and set default match condition to failed
         matches = []
         failed = 1
 
@@ -160,15 +170,12 @@ def parse(url, contentMatches=[], agent=None,
                     root = etree.fromstring(body)
 
                 except:
-                    # suppress exceptions
                     pass
 
-            # execute xpath and test
             try:
                 # query xml doc, element(s) matches fill the result list
                 xpathresult = root.xpath(value)
 
-                # look for non-empty list
                 if len(xpathresult) > 0:
 
                     # match successful
@@ -185,45 +192,37 @@ def parse(url, contentMatches=[], agent=None,
                         xpathvalue = etree.XPath(value)(root)[0].text
                         if xpathvalue is not None:
                                 matches.append(float(xpathvalue[0]))
-            # ignore exceptions
             except:
                 pass
 
         elif type == "regex":
             try:
-                # compile and run regex, result will
-                # be None if the match failed
-                # or a match object if successful
+                # compile and re.search
                 result = re.compile(value, re.DOTALL).search(body)
 
-                # test regex result comprehensively
+                # match?
                 if result is not None or result.groups()[0] is not None:
 
                     # match was successful
                     failed = 0
 
-                    # groups() returns all subgroup matches
-                    # we only want one match
+                    # try to pull content returned
                     if len(result.groups()) > 0:
 
-                        # using list.extend() to iterate the return tuple
                         matches.extend(result.groups())
 
-                        # throw out whitespace and alpha
+                        # throw out whitespace and alpha so we can threshold this reliably
                         matches[0] = re.sub("[\s,a-z,A-Z]", "", matches[0])
 
-            # ignoring exceptions
             except:
                 pass
 
-        # append the matches to the results
+        # gather matches
         if len(matches) > 0:
 
-            # cast to float
             try:
                 results.append((name, float(matches[0])))
 
-            # catch value and type errors and ignore them
             except (ValueError, TypeError):
                 pass
 
