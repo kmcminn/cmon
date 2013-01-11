@@ -10,10 +10,10 @@ $ apt-get instal libxml2 libxml2-dev python-dev curl libcurl python-setuptools
 $ easy_install pycurl lxml
 $ git clone https://github.com/kmcminn/cmon.git
 ```
-### Usage ###
+# Usage #
 The plugin can be used as command line tool or a python module for getting measurements.
 
-# commandline #
+### commandline ###
 ```
 $ cmon/nagios/check_cmon.py -h
 usage: check_cmon.py [-h] [-u URL] [-p PROXY] [-a AGENT] [-v VERBOSE]
@@ -74,7 +74,7 @@ optional arguments:
                         return xml
 ```
 
-# module
+### module ###
 ```
 $ python
 Python 2.7.3 (default, Aug  1 2012, 05:14:39)
@@ -87,13 +87,11 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 
-
-## Nagios ##
+### nagios ###
 The plugin lacks warning and critical threshold abilities. Add it to your plugins directory and get hacking!
 
-## Zenoss3 ##
+### zenoss3 ###
 cmon/zenoss3 is non-developer mode zenpack that was last tested in zenoss3. Alternately you can use the nagios plugin as a command in zenoss3.
 
-## Zenoss4 ##
+### zenoss4 ###
 use as a command datasource and call it directly on the command line. add datapoints manually.
-
