@@ -9,7 +9,7 @@ import time
 from lxml import etree
 
 
-MAX_CHECKS = 20
+MAX_CHECKS = 5
 PREFIXES = ("name", "regex", "xpath")
 AGENTS = {
     None: 'Mozilla/5.0 (Windows NT 5.1; rv:15.0)' +
