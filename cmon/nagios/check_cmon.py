@@ -6,7 +6,9 @@ import re
 import pycurl
 import StringIO
 import time
+import decimal 
 from lxml import etree
+
 
 MAX_CHECKS = 20
 PREFIXES = ("name", "regex", "xpath")
@@ -25,6 +27,7 @@ AGENTS = {
     'mobile': 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420'
     + '(KHTML, like Gecko) Version/3.0 Mobile/1C28 Safari/419.3',
 }
+context = decimal.getcontext()
 
 
 def parseContentMatches(cfg, start=0, length=MAX_CHECKS):
@@ -72,6 +75,24 @@ def parseWithConfig(cfg, start=0, length=MAX_CHECKS):
     return results
 
 
+def num_str(num, precision = 4):
+    """
+    returns a number supressing formatting exceptions
+    """
+    
+    try:
+
+        num = float(num)
+
+    except:
+        return 0;
+
+
+    #return '{0:.4g}'.format(num)
+    return ('%f' % (num))
+
+
+
 def parse(url, contentMatches=[], agent=None,
           proxy=None, hostheader=None, timeout=10):
 
@@ -106,9 +127,9 @@ def parse(url, contentMatches=[], agent=None,
 
     results = []
     results.append(('curl_error', 0))
-    results.append(('time_total', c.getinfo(c.TOTAL_TIME)))
-    results.append(('time_dns', c.getinfo(c.NAMELOOKUP_TIME)))
-    results.append(('time_connect', c.getinfo(c.CONNECT_TIME)))
+    results.append(('time_total', num_str(c.getinfo(c.TOTAL_TIME))))
+    results.append(('time_dns', num_str(c.getinfo(c.NAMELOOKUP_TIME))))
+    results.append(('time_connect', num_str(c.getinfo(c.CONNECT_TIME))))
     results.append(('size_download', c.getinfo(c.SIZE_DOWNLOAD)))
     results.append(('http_code', c.getinfo(c.RESPONSE_CODE)))
 
@@ -237,7 +258,8 @@ if __name__ == "__main__":
     sys.stdout.write("Success | ")
 
     for name, value in results:
-        sys.stdout.write("%s=%s" % (name, value))
+        sys.stdout.write("%s=%s;; " % (name, value))
+
     print
 
     log = options.log
