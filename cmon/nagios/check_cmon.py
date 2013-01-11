@@ -24,21 +24,77 @@ AGENTS = {
     'firefox3': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;' +
                 ' rv:1.9.0.6) Gecko/2009011913 Firefox/3.0.6',
     'mobile': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X)' +
-              ' AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3'
+              ' AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1' +
+              ' Mobile/9A334 Safari/7534.48.3'
 }
 
 
-def nagiosStdout(results):
+def expandXpathRegexOptions(argp, prefixes, total):
+    """
+    iterates and makes alot of regex and xpath parser args
+    """
+
+    regex_help = "String regex to test. use groups to extract int values"
+    xpath_help = "Xpath string to parse. requires http resource to " \
+                 + "return xml"
+    name_help = "Variable name to use when returning results in the " \
+                + "performance results"
+
+    for i in range(0, total):
+
+        for prefix in prefixes:
+
+            name = "%s-%d" % (prefix, i)
+            dest = "%s_%d" % (prefix, i)
+
+            if 'name' in prefix:
+                argp.add_argument("--%s" % name, dest=dest, help=name_help)
+
+            elif 'regex' in prefix:
+                argp.add_argument("--%s" % name, dest=dest, help=regex_help)
+
+            elif 'xpath' in prefix:
+                argp.add_argument("--%s" % name, dest=dest, help=xpath_help)
+
+            else:
+                argp.add_argument("--%s" % name, dest=dest)
+
+
+def nagiosStdoutExit(results):
     """
     spit out stdout
     """
-
     sys.stdout.write("Success | ")
 
     for name, value in results:
+
         sys.stdout.write("%s=%s;; " % (name, value))
 
+        if 'curl_error' in name:
+
+            try:
+                exitcode = int(value)
+            except:
+                exitcode = 250
+
     sys.stdout.write("\n")
+    sys.exit(exitcode)
+
+
+def logResultsToFile(filename):
+
+    import time
+
+    try:
+        f = open(options.log, 'a')
+        logFmt = "%s | %s \n"
+        msg = logFmt % (time.time(), ' '.join(sys.argv))
+        f.write(msg)
+        f.close()
+
+    except Exception, e:
+
+        print "Error writing to file: ", e
 
 
 def parseContentMatches(cfg, start=0, length=MAX_CHECKS):
@@ -236,38 +292,33 @@ def parse(url, contentMatches=[], agent=None,
 if __name__ == "__main__":
 
     if len(sys.argv) is 1:
-        print sys.argv[0], '<options>'
-        print sys.argv[0], '-h for help'
+        print "for help use: ", sys.argv[0], ' -h'
         sys.exit(1)
-
 
     import argparse
 
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-u", "--url", dest="url",
-                        help="hostname[:port] to connect to and check")
+                        help="Hostname[:port] to connect to and check. Supports " +
+                             "ssl. Supports strings with http[s]:// or without. " +
+                             "https will error if server certificate is invalid")
     parser.add_argument("-p", "--proxy", dest="proxy",
-                        help="proxy to connect through")
+                        help="Proxy to connect through")
     parser.add_argument("-a", "--agent", dest="agent",
-                        help="browser agent to use for query, " +
-                        "default firefox 15 strings, agent codes [ie6, ie7, firefox15, " +
+                        help="Browser agent to use for query, " +
+                        "default firefox 15 strings, agent codes [ ie6, ie7, firefox15, " +
                         " mobile, firefox3, opera")
     parser.add_argument("-v", "--verbose", dest="verbose",
                         help="enables debugging output, currently does nothing")
     parser.add_argument("--header", nargs="+", dest="header",
-                        help="set a <string> header. suitable for setting" )
+                        help="set a <string> header. suitable for setting")
     parser.add_argument("-t", "--timeout", dest="timeout", default=10,
                         help="timeout for the tcp connection")
     parser.add_argument("-l", "--log", dest="log",
                         help="write to <filename>")
 
-
-    for i in range(0, MAX_CHECKS):
-        for prefix in PREFIXES:
-            name = "%s-%d" % (prefix, i)
-            dest = "%s_%d" % (prefix, i)
-            parser.add_argument("--%s" % name, dest=dest)
+    expandXpathRegexOptions(parser, PREFIXES, MAX_CHECKS)
 
     options = parser.parse_args()
 
@@ -276,17 +327,8 @@ if __name__ == "__main__":
     results = parse(options.url, contentMatches, options.agent,
                     options.proxy, options.header, options.timeout)
 
-    nagiosStdout(results)
-
     if options.log:
 
-        import time
+        logResultsToFile(options.log)
 
-        try:
-            f = open(options.log, 'a')
-            logFmt = "%s | %s \n"
-            msg = logFmt % (time.time(), ' '.join(sys.argv))
-            f.write(msg)
-            f.close()
-        except:
-            print "error writing to file"
+    nagiosStdoutExit(results)
