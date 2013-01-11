@@ -21,6 +21,7 @@ AGENTS = {
            ' GTB5; .NET CLR 2.0.50727)',
     'ie8': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)'
     'ie9': 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)'
+    'ie10': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'
     'opera': 'Opera/9.62 (Windows NT 5.1; U; pt-BR) Presto/2.1.1',
     'firefox15': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;' +
                  ' rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12',
