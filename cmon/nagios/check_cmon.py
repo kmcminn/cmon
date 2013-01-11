@@ -6,7 +6,6 @@ import re
 import pycurl
 import StringIO
 import time
-import decimal 
 from lxml import etree
 
 
@@ -27,13 +26,11 @@ AGENTS = {
     'mobile': 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420'
     + '(KHTML, like Gecko) Version/3.0 Mobile/1C28 Safari/419.3',
 }
-context = decimal.getcontext()
 
 
 def parseContentMatches(cfg, start=0, length=MAX_CHECKS):
     """
-    parses options from ZenHub config *or* optparse.Options
-    (anything with name/regex/xpath_N properties)
+    parses name/regex/xpath_N properties
     """
 
     contentMatches = []
@@ -63,6 +60,11 @@ def parseContentMatches(cfg, start=0, length=MAX_CHECKS):
 
 
 def parseWithConfig(cfg, start=0, length=MAX_CHECKS):
+    """
+    parses using a passed in config. typically from
+    zenoss in daemon mode
+    """
+
     url = cfg.url
     contentMatches = parseContentMatches(cfg, start, length)
     agent = cfg.agent
@@ -88,7 +90,6 @@ def num_str(num, precision = 4):
         return 0;
 
 
-    #return '{0:.4g}'.format(num)
     return ('%f' % (num))
 
 
