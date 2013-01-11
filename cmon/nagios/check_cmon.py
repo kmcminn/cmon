@@ -170,7 +170,7 @@ def formatNumber(num, precision=4):
     return ('%f' % (num))
 
 
-def curlConfig(write, url, timeout, agent, proxy, header):
+def curlConfig(write, url, timeout, agent, proxy, header, issl):
 
     c = pycurl.Curl()
     c.setopt(pycurl.WRITEFUNCTION, write)
@@ -183,23 +183,29 @@ def curlConfig(write, url, timeout, agent, proxy, header):
     c.setopt(pycurl.NOSIGNAL, 1)
     c.setopt(pycurl.HTTPPROXYTUNNEL, 0)
 
+
     if proxy:
         c.setopt(pycurl.PROXY, proxy)
 
     if header:
         c.setopt(pycurl.HTTPHEADER, header)
 
+    if issl:
+        c.setopt(pycurl.SSL_VERIFYHOST, 0)
+        c.setopt(pycurl.SSL_VERIFYPEER, 0)
+
+
     return c
 
 
 def parse(url, contentMatches=[], agent=None,
-          proxy=None, header=None, timeout=10):
+          proxy=None, header=None, timeout=10, ssl=None):
 
     timeout = int(timeout)
     agent = AGENTS.get(agent, AGENTS.get(None))
     b = StringIO.StringIO()
 
-    curl = curlConfig(b.write, url, timeout, agent, proxy, header)
+    curl = curlConfig(b.write, url, timeout, agent, proxy, header, ssl)
 
     try:
         curl.perform()
@@ -339,6 +345,9 @@ if __name__ == "__main__":
                         help="Set a timeout for request")
     parser.add_argument("-l", "--log", dest="log",
                         help="Optionally write parse commands to a file")
+    parser.add_argument("--nosslcheck", action="store_true",
+                        help="disable ssl cert and host validation ") 
+                        
 
     expandXpathRegexOptions(parser, PREFIXES, MAX_CHECKS)
 
@@ -347,7 +356,8 @@ if __name__ == "__main__":
     contentMatches = parseContentMatches(options)
 
     results = parse(options.url, contentMatches, options.agent,
-                    options.proxy, options.header, options.timeout)
+                    options.proxy, options.header, options.timeout,
+                    options.nosslcheck)
 
     if options.log:
 
