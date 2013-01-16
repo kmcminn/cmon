@@ -36,6 +36,7 @@ AGENTS = {
               ' AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1' +
               ' Mobile/9A334 Safari/7534.48.3'
 }
+pycurl.COOKIESESSION = 96
 
 
 def expandXpathRegexOptions(argp, prefixes, total):
@@ -176,7 +177,7 @@ def formatNumber(num, precision=4):
     return ('%f' % (num))
 
 
-def curlConfig(write, url, timeout, agent, proxy, header, issl):
+def curlConfig(write, url, timeout, agent, proxy, header, issl, icookie):
 
     c = pycurl.Curl()
     c.setopt(pycurl.WRITEFUNCTION, write)
@@ -200,18 +201,23 @@ def curlConfig(write, url, timeout, agent, proxy, header, issl):
         c.setopt(pycurl.SSL_VERIFYHOST, 0)
         c.setopt(pycurl.SSL_VERIFYPEER, 0)
 
+    if icookie:
+        c.setopt(pycurl.COOKIESESSION, 0)
+        c.setopt(pycurl.COOKIEFILE, icookie)
+        c.setopt(pycurl.COOKIEJAR, icookie)
+
 
     return c
 
 
 def parse(url, contentMatches=[], agent=None,
-          proxy=None, header=None, timeout=10, ssl=None):
+          proxy=None, header=None, timeout=10, ssl=None, cookiejar=None):
 
     timeout = int(timeout)
     agent = AGENTS.get(agent, AGENTS.get(None))
     b = StringIO.StringIO()
 
-    curl = curlConfig(b.write, url, timeout, agent, proxy, header, ssl)
+    curl = curlConfig(b.write, url, timeout, agent, proxy, header, ssl, cookiejar)
 
     try:
         curl.perform()
@@ -355,6 +361,8 @@ if __name__ == "__main__":
                         help="Optionally write parse commands to a file")
     parser.add_argument("--nosslcheck", action="store_true",
                         help="disable ssl cert and host validation ") 
+    parser.add_argument("--cookiejar", dest="cookiejar", default=False,
+                        help="reuse a curl cookie jar FILEPATH")
                         
 
     expandXpathRegexOptions(parser, PREFIXES, MAX_CHECKS)
@@ -365,7 +373,7 @@ if __name__ == "__main__":
 
     results = parse(options.url, contentMatches, options.agent,
                     options.proxy, options.header, options.timeout,
-                    options.nosslcheck)
+                    options.nosslcheck, options.cookiejar)
 
     if options.log:
 
