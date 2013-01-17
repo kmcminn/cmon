@@ -33,11 +33,12 @@ The plugin can be used as command line tool or a python module for getting measu
 $ cmon/nagios/check_cmon.py -h
 usage: check_cmon.py [-h] [-u URL] [-p PROXY] [-a AGENT] [-v VERBOSE]
                      [--header HEADER [HEADER ...]] [-t TIMEOUT] [-l LOG]
-                     [--name-0 NAME_0] [--regex-0 REGEX_0] [--xpath-0 XPATH_0]
-                     [--name-1 NAME_1] [--regex-1 REGEX_1] [--xpath-1 XPATH_1]
-                     [--name-2 NAME_2] [--regex-2 REGEX_2] [--xpath-2 XPATH_2]
-                     [--name-3 NAME_3] [--regex-3 REGEX_3] [--xpath-3 XPATH_3]
-                     [--name-4 NAME_4] [--regex-4 REGEX_4] [--xpath-4 XPATH_4]
+                     [--nosslcheck] [--cookiejar COOKIEJAR] [--name-0 NAME_0]
+                     [--regex-0 REGEX_0] [--xpath-0 XPATH_0] [--name-1 NAME_1]
+                     [--regex-1 REGEX_1] [--xpath-1 XPATH_1] [--name-2 NAME_2]
+                     [--regex-2 REGEX_2] [--xpath-2 XPATH_2] [--name-3 NAME_3]
+                     [--regex-3 REGEX_3] [--xpath-3 XPATH_3] [--name-4 NAME_4]
+                     [--regex-4 REGEX_4] [--xpath-4 XPATH_4]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -62,6 +63,9 @@ optional arguments:
   -t TIMEOUT, --timeout TIMEOUT
                         Set a timeout for request
   -l LOG, --log LOG     Optionally write parse commands to a file
+  --nosslcheck          disable ssl cert and host validation
+  --cookiejar COOKIEJAR
+                        reuse a curl cookie jar FILEPATH
   --name-0 NAME_0       Variable name to use when returning results in the
                         performance results
   --regex-0 REGEX_0     String regex to test. use groups to extract int values
@@ -87,6 +91,7 @@ optional arguments:
   --regex-4 REGEX_4     String regex to test. use groups to extract int values
   --xpath-4 XPATH_4     Xpath string to parse. requires http resource to
                         return xml
+
 ```
 
 ### module ###
