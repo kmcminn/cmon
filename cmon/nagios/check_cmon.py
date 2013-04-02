@@ -360,7 +360,7 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--log", dest="log",
                         help="Optionally write parse commands to a file")
     parser.add_argument("--nosslcheck", action="store_true",
-                        help="disable ssl cert and host validation ") 
+                        help="disable ssl cert and host validation ")
     parser.add_argument("--cookiejar", dest="cookiejar", default=False,
                         help="reuse a curl cookie jar FILEPATH")
                         
