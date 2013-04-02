@@ -209,6 +209,7 @@ def curlConfig(write, url, timeout, agent, proxy, header, issl, icookie):
 
     return c
 
+
 def parse(url, contentMatches=[], agent=None,
           proxy=None, header=None, timeout=10, ssl=None, cookiejar=None):
 
