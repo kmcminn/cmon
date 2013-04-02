@@ -190,7 +190,6 @@ def curlConfig(write, url, timeout, agent, proxy, header, issl, icookie):
     c.setopt(pycurl.NOSIGNAL, 1)
     c.setopt(pycurl.HTTPPROXYTUNNEL, 0)
 
-
     if proxy:
         c.setopt(pycurl.PROXY, proxy)
 
