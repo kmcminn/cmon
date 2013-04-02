@@ -364,7 +364,6 @@ if __name__ == "__main__":
     parser.add_argument("--cookiejar", dest="cookiejar", default=False,
                         help="reuse a curl cookie jar FILEPATH")
                         
-
     expandXpathRegexOptions(parser, PREFIXES, MAX_CHECKS)
 
     options = parser.parse_args()
