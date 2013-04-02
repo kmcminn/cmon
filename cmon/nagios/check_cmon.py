@@ -224,7 +224,6 @@ def parse(url, contentMatches=[], agent=None,
 
     except Exception, pce:
 
-
         try:
             cerror = int(pce[0])
         except:
