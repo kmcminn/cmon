@@ -38,6 +38,23 @@ AGENTS = {
 }
 pycurl.COOKIESESSION = 96
 
+def _getResultType(result):
+    _ = result[0]
+    return 'lxml' if 'lxml' in str(type(_)) else 'result'
+
+
+def _findValue(result):
+    """ returns none if not a sensible list-type object or str else the value """
+    value = None
+    if isinstance(result, list):
+        value = result[0] if len(result) >= 1 else None
+    elif isinstance(result, basestring):
+        value = result if len >= 1 else None
+    elif isinstance(result, float) or isinstance(result, int):
+        value = result
+    else:
+        pass
+    return value
 
 def expandXpathRegexOptions(argp, prefixes, total):
     """
@@ -190,7 +207,6 @@ def curlConfig(write, url, timeout, agent, proxy, header, issl, icookie):
     c.setopt(pycurl.NOSIGNAL, 1)
     c.setopt(pycurl.HTTPPROXYTUNNEL, 0)
 
-
     if proxy:
         c.setopt(pycurl.PROXY, proxy)
 
@@ -223,7 +239,6 @@ def parse(url, contentMatches=[], agent=None,
         curl.perform()
 
     except Exception, pce:
-
 
         try:
             cerror = int(pce[0])
@@ -270,20 +285,18 @@ def parse(url, contentMatches=[], agent=None,
 
                     # match successful
                     failed = 0
+                    xpathvalue = xpathresult
 
-                    # if initial xpath found a single element
-                    # attribute or value it will be str and we can catch it
-                    if isinstance(xpathresult[0], str):
-                            matches.append(xpathresult[0])
-
-                    # on xml that doesn't have carriage returns we need to use
-                    # this xpath class to get simple element or attribute value
-                    else:
+                    # result not fully extracted, seen on xml with no line breaks
+                    if 'lxml' in _getResultType(xpathresult):
                         xpathvalue = etree.XPath(value)(root)[0].text
-                        if xpathvalue is not None:
-                                matches.append(float(xpathvalue[0]))
-            except:
+
+                    # extract and append the value to matches
+                    matches.append(_findValue(xpathvalue))
+
+            except Exception:
                 pass
+                
 
         elif typex == "regex":
 
@@ -303,7 +316,7 @@ def parse(url, contentMatches=[], agent=None,
                         matches.extend(result.groups())
 
                         # throw out whitespace and alpha so we
-                        # can threshold this reliably
+                        # can threshold perf data reliably
                         matches[0] = re.sub("[\s,a-z,A-Z]", "", matches[0])
 
             except:
@@ -360,10 +373,9 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--log", dest="log",
                         help="Optionally write parse commands to a file")
     parser.add_argument("--nosslcheck", action="store_true",
-                        help="disable ssl cert and host validation ") 
+                        help="disable ssl cert and host validation ")
     parser.add_argument("--cookiejar", dest="cookiejar", default=False,
                         help="reuse a curl cookie jar FILEPATH")
-                        
 
     expandXpathRegexOptions(parser, PREFIXES, MAX_CHECKS)
 
