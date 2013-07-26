@@ -1,12 +1,12 @@
 cMon
 ========
 
-#### curl monitor - Nagios/Zenoss plugin for measuing http in all its forms ####
+#### curl monitor - Nagios/Zenoss plugin for measuing http
 (WIP) Python zenoss/nagios plugin utilizing [python.re](http://docs.python.org/2/library/re.html), [lxml.etree](http://lxml.de/1.3/tutorial.html) and [libcurl](http://curl.haxx.se/libcurl/libcurl) intended for effective http measurement and monitoring that check_http wasn't designed to do:
 
 
-1. Support for Xpath and value extraction
-2. Support for regex, regex subgroups and value extractions
+1. Support for Xpath: path exists and value extractions
+2. Support for regex: subgroups and value extractions
 3. Multiple request measurements
 4. Single error performance variable
 5. Easy support for hostnames, http, https and ports
@@ -24,10 +24,7 @@ $ git clone https://github.com/kmcminn/cmon.git
 $ cmon/cmon/nagios/check_cmon.py -u www.google.com
 SUCCESS cMon OK | curl_error=0;;  time_total=0.172406;;  time_dns=0.022489;;  time_connect=0.040115;;  size_download=101303.0;;  http_code=200;;
 ```
-# Usage #
-The plugin can be used as command line tool or a python module for getting measurements.
-
-### commandline ###
+### Usage ###
 ```
 $ cmon/nagios/check_cmon.py -h
 usage: check_cmon.py [-h] [-u URL] [-p PROXY] [-a AGENT] [-v VERBOSE]
