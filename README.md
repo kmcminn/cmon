@@ -2,21 +2,18 @@ cMon
 ========
 
 #### curl monitor - Nagios/Zenoss plugin for measuing http in all its forms ####
-(WIP) Python zenoss/nagios plugin utilizing [python.re](http://docs.python.org/2/library/re.html), [lxml.etree](http://lxml.de/1.3/tutorial.html) and [libcurl](http://curl.haxx.se/libcurl/libcurl) to do effective and simple httpd measurement and monitoring.
+(WIP) Python zenoss/nagios plugin utilizing [python.re](http://docs.python.org/2/library/re.html), [lxml.etree](http://lxml.de/1.3/tutorial.html) and [libcurl](http://curl.haxx.se/libcurl/libcurl) intended for effective http measurement and monitoring that check_http wasn't designed to do:
 
-Was written to be more versatile than check_http. Ala:
 
-1. Xpath
-2. Xpath extract value
-3. Regex anything
-4. Regex group extract values
-5. Multiple request measurements
-6. Single error performance variable
-7. Easy support for hostnames, http, https and ports
-8. Basic Auth
-9. Headers (cookies, host, anything)
-10. User Agents
-11. Proxy support
+1. Support for Xpath and value extraction
+2. Support for regex, regex subgroups and value extractions
+3. Multiple request measurements
+4. Single error performance variable
+5. Easy support for hostnames, http, https and ports
+6. Supports Basic Auth
+7. Custom Header Support (cookies, host, anything)
+8. Custom User Agents
+9. Proxy support
 
 
 ### Install ###
@@ -24,6 +21,8 @@ Was written to be more versatile than check_http. Ala:
 $ apt-get instal libxml2 libxml2-dev python-dev curl libcurl python-setuptools
 $ easy_install pycurl lxml
 $ git clone https://github.com/kmcminn/cmon.git
+$ cmon/cmon/nagios/check_cmon.py -u www.google.com
+SUCCESS cMon OK | curl_error=0;;  time_total=0.172406;;  time_dns=0.022489;;  time_connect=0.040115;;  size_download=101303.0;;  http_code=200;;
 ```
 # Usage #
 The plugin can be used as command line tool or a python module for getting measurements.
@@ -116,9 +115,11 @@ cmon/cmon/zenoss3 is a non-developer mode zenpack that was last tested in zenoss
 ### zenoss4 ###
 use just the plugin as a command datasource in your monitoring templates. Performance variables are GAUGE types and in zenoss the datapoint name needs to match the performance variable name in the output of the script. You'd typically install this in $ZENHOME/bin
 
-# Notes #
+### Notes ###
 The nagios plugin's regex and xpath logic has been well vetted in large production environments. If you see any improvements, please let me know. The code is a bit rough around the edges but largely effective for the audiences that will use and maintain it. The zenoss3 zenpack has a twisted daemon that bolts into a zenoss collector which will save you cycles on spawning a python shell with every invocation and is fairly fast. 
 
 The plugin was initially written for zenoss2. In zenoss, thresholds are handled externally to a plugin. Returnning integers and floats regardless of what goes wrong is crucial to keeping things like graphs happy and thresholds working correctly. 
 
-
+### Todo ###
+* Optimize for use in nagios environments, namely passing warn and crit thresholds
+* Write some tests
